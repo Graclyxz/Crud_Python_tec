@@ -5,8 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from .. import models
 
 
-@view_config(route_name='home', renderer='backend:templates/mytemplate.mako')
-@view_config(route_name='users', renderer='backend:templates/mytemplate.mako')
+@view_config(route_name='home', renderer='backend:templates/mytemplate.jinja2')
 def my_view(request):
     try:
         query = request.dbsession.query(models.MyModel)
