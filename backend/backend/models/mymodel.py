@@ -3,6 +3,7 @@ from sqlalchemy import (
     Index,
     Integer,
     Text,
+    String,
 )
 
 from .meta import Base
@@ -16,3 +17,10 @@ class MyModel(Base):
 
 
 Index('my_index', MyModel.name, unique=True, mysql_length=255)
+
+
+class Note(Base):
+    __tablename__ = 'notes'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String, nullable=False)
+    text = Column(String, nullable=False)

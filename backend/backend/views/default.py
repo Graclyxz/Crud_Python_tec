@@ -3,7 +3,7 @@ from pyramid.response import Response
 from sqlalchemy.exc import SQLAlchemyError
 
 from .. import models
-
+from ..models import Note
 
 @view_config(route_name='home', renderer='backend:templates/mytemplate.jinja2')
 def my_view(request):
@@ -15,6 +15,83 @@ def my_view(request):
     return {'one': one, 'project': 'backend'}
 
 
+#Crear notas con titulo y texto
+@view_config(route_name='add_note', renderer='json', request_method='POST')
+def add_note_view(request):
+    try:
+        title = request.json_body.get('title', '').strip()
+        text = request.json_body.get('text', '').strip()
+        if not title or not text:
+            return Response(json_body={"error": "El título y el texto no pueden estar vacíos"}, status=400)
+        
+        new_note = Note(title=title, text=text)
+        request.dbsession.add(new_note)
+        request.dbsession.flush()  # Guarda en la BD
+        
+        return {"message": "Nota creada", "id": new_note.id}
+    
+    except SQLAlchemyError:
+        return Response(json_body={"error": "Error en la base de datos"}, status=500)
+
+#Listar todas las notas
+@view_config(route_name='get_notes', renderer='json', request_method='GET')
+def get_notes_view(request):
+    try:
+        notes = request.dbsession.query(Note).all()
+        return [{"id": note.id, "title": note.title, "text": note.text} for note in notes]
+    except SQLAlchemyError:
+        return Response(json_body={"error": "Error en la base de datos"}, status=500)
+
+#Listar las notas por ID
+@view_config(route_name='get_note', renderer='json', request_method='GET')
+def get_note_view(request):
+    try:
+        note_id = int(request.matchdict['id'])
+        note = request.dbsession.query(Note).filter_by(id=note_id).first()
+        if note is None:
+            return Response(json_body={"error": "Nota no encontrada"}, status=404)
+        return {"id": note.id, "title": note.title, "text": note.text}
+    except SQLAlchemyError:
+        return Response(json_body={"error": "Error en la base de datos"}, status=500)
+
+#Actualizar notas por ID
+@view_config(route_name='update_note', renderer='json', request_method='PUT')
+def update_note_view(request):
+    try:
+        note_id = int(request.matchdict['id'])
+        note = request.dbsession.query(Note).filter_by(id=note_id).first()
+        if note is None:
+            return Response(json_body={"error": "Nota no encontrada"}, status=404)
+        
+        title = request.json_body.get('title', '').strip()
+        text = request.json_body.get('text', '').strip()
+        if not title or not text:
+            return Response(json_body={"error": "El título y el texto no pueden estar vacíos"}, status=400)
+        
+        note.title = title
+        note.text = text
+        request.dbsession.flush()  # Guarda en la BD
+        
+        return {"message": "Nota actualizada", "id": note.id}
+    except SQLAlchemyError:
+        return Response(json_body={"error": "Error en la base de datos"}, status=500)
+    
+#Eliminar notas por ID
+@view_config(route_name='delete_note', renderer='json', request_method='DELETE')
+def delete_note_view(request):
+    try:
+        note_id = int(request.matchdict['id'])
+        note = request.dbsession.query(Note).filter_by(id=note_id).first()
+        if note is None:
+            return Response(json_body={"error": "Nota no encontrada"}, status=404)
+        
+        request.dbsession.delete(note)
+        request.dbsession.flush()  # Guarda en la BD
+        
+        return {"message": "Nota eliminada", "id": note.id}
+    except SQLAlchemyError:
+        return Response(json_body={"error": "Error en la base de datos"}, status=500)
+    
 db_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem
 might be caused by one of the following things:
