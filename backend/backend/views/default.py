@@ -65,13 +65,15 @@ def update_note_view(request):
         
         title = request.json_body.get('title', '').strip()
         text = request.json_body.get('text', '').strip()
+
         if not title or not text:
             return Response(json_body={"error": "El título y el texto no pueden estar vacíos"}, status=400)
-        
+
         note.title = title
         note.text = text
         request.dbsession.flush()  # Guarda en la BD
-        
+        request.dbsession.refresh(note)
+
         return {"message": "Nota actualizada", "id": note.id}
     except SQLAlchemyError:
         return Response(json_body={"error": "Error en la base de datos"}, status=500)

@@ -1,0 +1,87 @@
+/* Notes.css */
+.notes-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+li h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+li p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.note-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.note-buttons button {
+    flex: 1;
+    background: #28a745;
+}
+
+.note-buttons button:nth-child(2) {
+    background: #dc3545;
+}
+
+.note-buttons button:hover {
+    opacity: 0.8;
+}
